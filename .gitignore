@@ -2,3 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+training.1600000.processed.noemoticon.csv
+sentiment_results
