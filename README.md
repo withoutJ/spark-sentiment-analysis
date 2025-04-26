@@ -22,3 +22,34 @@ Run the script by executing the following line.
 ```bash
 spark-submit --packages com.johnsnowlabs.nlp:spark-nlp_2.12:5.5.3 --conf spark.jars.packages=com.johnsnowlabs.nlp:spark-nlp_2.12:5.5.3 main.py
 ```
+
+
+# Appendix: Guide for Running a Script on Amazon EMR
+
+## Create an S3 Bucket and Make It Public
+1. Log into your AWS Management Console.
+2. Navigate to the Amazon S3 service.
+3. Create a new bucket and configure its permissions to allow public access. Be cautious with public settings to avoid unintended access to your data.
+
+## Upload Files to S3 Bucket
+1. Upload `bootstrapper.sh`, your main script, and dataset to the newly created S3 bucket.
+2. Ensure that the uploaded files are publicly accessible if required.
+
+## Create an EMR Cluster
+1. In the AWS Management Console, go to the Amazon EMR service.
+2. Start the cluster creation process.
+3. Select EMR version `emr-7.8.0`.
+4. Install applications: Hadoop 3.4.1, Hive 3.1.3, JupyterEnterpriseGateway 2.6.0, Livy 0.8.0, Spark 3.5.4, TensorFlow 2.16.1, and Zeppelin 0.11.1.
+5. Choose the instance type as specified in Appendix E.
+6. Configure the number of cores between 4 and 8.
+7. Add the bootstrapper script from your S3 bucket as detailed in Appendix C.
+8. Set the roles to their default settings.
+
+## Add a Step to EMR Cluster
+1. Name the step.
+2. Choose the script to run from your S3 bucket.
+3. Add Spark-submit options as described in Appendix D.
+
+## Access Results
+1. After the script execution, results will be stored in the specified directory of your S3 bucket.
+2. Access the results by navigating to the appropriate S3 bucket directory.
