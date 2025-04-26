@@ -35,7 +35,7 @@ Dataset is available [here](https://www.kaggle.com/datasets/kazanova/sentiment14
 2. Access the results by navigating to the appropriate S3 bucket directory.
 
 
-#Guide for Running Locally
+# Guide for Running Locally
 
 ### Requirements
 
