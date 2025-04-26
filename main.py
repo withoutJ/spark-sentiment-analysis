@@ -17,7 +17,6 @@ from sparknlp.pretrained import PretrainedPipeline
 from pyspark.sql.types import StringType, IntegerType, StructType, StructField
 from pyspark.sql.functions import col, explode, split, regexp_replace, lower, trim
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-import boto3
 import io
 
 # Model selection
