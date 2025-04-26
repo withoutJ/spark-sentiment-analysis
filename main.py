@@ -26,7 +26,7 @@ print("Apache Spark version:", spark.version)
 MODEL_NAME='classifierdl_use_emotion'
 
 # Read the dataset
-df = spark.read.csv("training.1600000.processed.noemoticon.csv", header=False)
+df = spark.read.csv("s3://di1naza/training.1600000.processed.noemoticon.csv", header=False)
 
 # Clean the data
 df = df.select(
@@ -71,7 +71,7 @@ result.select("text", F.array_join("sentiment.result", ",").alias("sentiment")) 
     .write \
     .mode("overwrite") \
     .option("header", "true") \
-    .csv("sentiment_results")
+    .csv("s3://di1naza/sentiment_results")
 
 # Stop Spark session
 spark.stop()
