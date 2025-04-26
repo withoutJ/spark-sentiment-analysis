@@ -218,22 +218,19 @@ log_metrics("results_saving_end")
 metrics["total_execution_time"] = time.time() - metrics["start_time"]
 
 # Save metrics to S3
-s3 = boto3.client('s3')
 metrics_file = f"benchmark_metrics_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-json_buffer = io.StringIO()
-json.dump(metrics, json_buffer, indent=4)
-s3.put_object(
-    Bucket='di1naza',
-    Key=f'metrics/{metrics_file}',
-    Body=json_buffer.getvalue()
-)
+results = [
+    f"Total Execution Time: {metrics['total_execution_time']:.2f} seconds",
+    f"Model Accuracy: {accuracy:.4f}",
+    "\nStage Times:"
+]
+for stage, time_taken in metrics["stage_times"].items():
+    results.append(f"{stage}: {time_taken:.2f} seconds")
 
-# print("\nBenchmark Results:")
-# print(f"Total Execution Time: {metrics['total_execution_time']:.2f} seconds")
-# print(f"Model Accuracy: {accuracy:.4f}")
-# print("\nStage Times:")
-# for stage, time_taken in metrics["stage_times"].items():
-#     print(f"{stage}: {time_taken:.2f} seconds")
+# Save detailed results
+textual_output = spark.createDataFrame(results, 'string')
+textual_output = textual_output.repartition(1)
+textual_output.write.text(f"s3://di1naza/metrics/{metrics_file}")
 
 # Stop Spark session
 spark.stop()
