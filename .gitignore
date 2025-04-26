@@ -7,3 +7,5 @@ training.1600000.processed.noemoticon.csv
 sentiment_results
 
 benchmark_metrics_*.json
+
+metrics/*

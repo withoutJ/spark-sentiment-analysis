@@ -20,7 +20,7 @@ from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 import io
 
 # Model selection
-MODEL_CHOICE = "sentimentdl"  # Options: "vivekn" or "sentimentdl"
+MODEL_CHOICE = "vivekn"  # Options: "vivekn" or "sentimentdl"
 
 # Initialize Spark Session with Spark NLP and monitoring
 spark = SparkSession.builder \
@@ -252,7 +252,7 @@ for row in metrics["model_metrics"]["confusion_matrix"]:
 # Save detailed results
 textual_output = spark.createDataFrame(results, 'string')
 textual_output = textual_output.repartition(1)
-textual_output.write.text(f"s3://di1naza/metrics/{metrics_file}")
+textual_output.write.text(f"metrics/{metrics_file}")
 
 # Stop Spark session
 spark.stop()
