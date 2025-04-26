@@ -17,6 +17,8 @@ from sparknlp.pretrained import PretrainedPipeline
 from pyspark.sql.types import StringType, IntegerType, StructType, StructField
 from pyspark.sql.functions import col, explode, split, regexp_replace, lower, trim
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+import boto3
+import io
 
 # Model selection
 MODEL_CHOICE = "sentimentdl"  # Options: "vivekn" or "sentimentdl"
@@ -215,17 +217,23 @@ log_metrics("results_saving_end")
 # Calculate total execution time
 metrics["total_execution_time"] = time.time() - metrics["start_time"]
 
-# Save metrics to JSON file
+# Save metrics to S3
+s3 = boto3.client('s3')
 metrics_file = f"benchmark_metrics_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-with open(metrics_file, 'w') as f:
-    json.dump(metrics, f, indent=4)
+json_buffer = io.StringIO()
+json.dump(metrics, json_buffer, indent=4)
+s3.put_object(
+    Bucket='di1naza',
+    Key=f'metrics/{metrics_file}',
+    Body=json_buffer.getvalue()
+)
 
-print("\nBenchmark Results:")
-print(f"Total Execution Time: {metrics['total_execution_time']:.2f} seconds")
-print(f"Model Accuracy: {accuracy:.4f}")
-print("\nStage Times:")
-for stage, time_taken in metrics["stage_times"].items():
-    print(f"{stage}: {time_taken:.2f} seconds")
+# print("\nBenchmark Results:")
+# print(f"Total Execution Time: {metrics['total_execution_time']:.2f} seconds")
+# print(f"Model Accuracy: {accuracy:.4f}")
+# print("\nStage Times:")
+# for stage, time_taken in metrics["stage_times"].items():
+#     print(f"{stage}: {time_taken:.2f} seconds")
 
 # Stop Spark session
 spark.stop()
