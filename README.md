@@ -1,7 +1,7 @@
 # spark-sentiment-analysis
 Benchmarking sentiment analysis run on AWS EMR cluster.
 
-### Dataset
+# Dataset
 Dataset is available [here](https://www.kaggle.com/datasets/kazanova/sentiment140?resource=download).
 
 # Guide for Running a Script on Amazon EMR
@@ -42,7 +42,7 @@ Dataset is available [here](https://www.kaggle.com/datasets/kazanova/sentiment14
 
 # Guide for Running Locally
 
-### Requirements
+## Requirements
 
 Install the required python packages by running the following command. You can create python virtual environment or conda environment.
 
@@ -52,7 +52,7 @@ pip install -r requirements.txt
 
 You can sepcify model choice ("vivekn" or "sentimentdl") in line 23 of main.py.
 
-### Inference
+## Inference
 
 Run the script by executing the following line.
 ```bash
