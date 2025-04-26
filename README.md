@@ -53,3 +53,19 @@ spark-submit --packages com.johnsnowlabs.nlp:spark-nlp_2.12:5.5.3 --conf spark.j
 ## Access Results
 1. After the script execution, results will be stored in the specified directory of your S3 bucket.
 2. Access the results by navigating to the appropriate S3 bucket directory.
+
+
+# Appendix C
+
+```bash
+sudo pip install numpy
+sudo pip install pandas
+sudo pip install scikit-learn
+sudo pip install matplotlib
+sudo pip install keras
+sudo pip install statsmodels
+sudo pip install nltk
+sudo pip install spark-nlp
+sudo pip install boto3
+sudo pip install psutil
+
