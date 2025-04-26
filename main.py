@@ -218,14 +218,37 @@ log_metrics("results_saving_end")
 metrics["total_execution_time"] = time.time() - metrics["start_time"]
 
 # Save metrics to S3
-metrics_file = f"benchmark_metrics_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+metrics_file = f"benchmark_metrics_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 results = [
+    "=== Execution Summary ===",
     f"Total Execution Time: {metrics['total_execution_time']:.2f} seconds",
-    f"Model Accuracy: {accuracy:.4f}",
-    "\nStage Times:"
+    f"Model Accuracy: {metrics['model_metrics']['accuracy']:.4f}",
+    
+    "\n=== Stage Times ==="
 ]
 for stage, time_taken in metrics["stage_times"].items():
     results.append(f"{stage}: {time_taken:.2f} seconds")
+
+results.extend([
+    "\n=== Memory Usage ===",
+    "Stage | Memory Used (MB) | Timestamp"
+])
+for usage in metrics["memory_usage"]:
+    results.append(f"{usage['stage']} | {usage['memory_used']:.2f} | {usage['timestamp']}")
+
+results.extend([
+    "\n=== CPU Usage ===",
+    "Stage | CPU Percent | Timestamp"
+])
+for usage in metrics["cpu_usage"]:
+    results.append(f"{usage['stage']} | {usage['cpu_percent']:.1f}% | {usage['timestamp']}")
+
+results.extend([
+    "\n=== Confusion Matrix ===",
+    "Actual | Predicted | Count"
+])
+for row in metrics["model_metrics"]["confusion_matrix"]:
+    results.append(f"{row[0]} | {row[1]} | {row[2]}")
 
 # Save detailed results
 textual_output = spark.createDataFrame(results, 'string')
