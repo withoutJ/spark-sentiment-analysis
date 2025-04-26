@@ -23,7 +23,10 @@ spark = SparkSession.builder \
 print("Spark NLP version", sparknlp.version())
 print("Apache Spark version:", spark.version)
 
-MODEL_NAME='classifierdl_use_emotion'
+# Get model type from Spark configuration
+model_type = spark.conf.get("spark.sentiment.model", "vivekn")  # Default to vivekn if not specified
+
+MODEL_NAME = 'sentimentdl_use_twitter'
 
 # Read the dataset
 df = spark.read.csv("training.1600000.processed.noemoticon.csv", header=False)
@@ -47,17 +50,35 @@ normalizer = Normalizer() \
     .setInputCols(["token"]) \
     .setOutputCol("normalized")
 
-vivekn_sentiment = ViveknSentimentModel.pretrained() \
-    .setInputCols(["document", "token"]) \
-    .setOutputCol("sentiment")
+# Create different pipeline stages based on selected model
+if model_type == 'vivekn':
+    sentiment_model = ViveknSentimentModel.pretrained() \
+        .setInputCols(["document", "token"]) \
+        .setOutputCol("sentiment")
+    
+    pipeline_stages = [
+        document_assembler,
+        tokenizer,
+        normalizer,
+        sentiment_model
+    ]
+else:  # sentimentdl
+    sentence_embeddings = UniversalSentenceEncoder.pretrained() \
+        .setInputCols(["document"]) \
+        .setOutputCol("sentence_embeddings")
+    
+    sentiment_model = SentimentDLModel.pretrained(name=MODEL_NAME, lang="en") \
+        .setInputCols(["sentence_embeddings"]) \
+        .setOutputCol("sentiment")
+    
+    pipeline_stages = [
+        document_assembler,
+        sentence_embeddings,
+        sentiment_model
+    ]
 
 # Create and fit the pipeline
-pipeline = Pipeline(stages=[
-    document_assembler,
-    tokenizer,
-    normalizer,
-    vivekn_sentiment
-])
+pipeline = Pipeline(stages=pipeline_stages)
 
 # Fit the pipeline and transform the data
 model = pipeline.fit(df)
@@ -71,7 +92,7 @@ result.select("text", F.array_join("sentiment.result", ",").alias("sentiment")) 
     .write \
     .mode("overwrite") \
     .option("header", "true") \
-    .csv("sentiment_results")
+    .csv(f"sentiment_results_{model_type}")
 
 # Stop Spark session
 spark.stop()
