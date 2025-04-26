@@ -55,7 +55,7 @@ spark-submit --packages com.johnsnowlabs.nlp:spark-nlp_2.12:5.5.3 --conf spark.j
 2. Access the results by navigating to the appropriate S3 bucket directory.
 
 
-# Appendix C
+## Appendix C
 
 ```bash
 sudo pip install numpy
@@ -68,4 +68,11 @@ sudo pip install nltk
 sudo pip install spark-nlp
 sudo pip install boto3
 sudo pip install psutil
+```
+## Appendix D
+
+```bash
+--deploy-mode cluster --packages com.johnsnowlabs.nlp:spark-nlp_2.12:5.5.3 
+--driver-memory 8g --executor-memory 8g --executor-cores 4
+```
 
